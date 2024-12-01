@@ -65,8 +65,8 @@ wss.on('connection', (ws) => {
    });
 });
 
-server.listen(3000, () => console.log('Сервер запущено на порту 3000'));
-const port = process.env.PORT || 3000;  // Використовуємо PORT від Render або 3000 за замовчуванням
+// Відкриваємо сервер на порту, який надає Render
+const port = process.env.PORT || 3000;
 server.listen(port, () => {
    console.log(`Server is running on port ${port}`);
 });
