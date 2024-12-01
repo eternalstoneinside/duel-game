@@ -13,7 +13,8 @@
 
    <script>
       // Підключення до сервера через WebSocket з використанням wss
-      const socket = new WebSocket(`wss://duel-game-5c6i.onrender.com`);
+      const socket = new WebSocket(`wss://${window.location.hostname}:10000`);
+
 
       const attackBtn = document.getElementById('attack');
       const status = document.getElementById('status');
