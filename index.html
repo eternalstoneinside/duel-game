@@ -1,43 +1,46 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
-    <meta charset="UTF-8" />
-    <title>Дуель</title>
+   <meta charset="UTF-8" />
+   <title>Дуель</title>
 </head>
+
 <body>
-    <h1>Дуель</h1>
-    <button id="attack" disabled>Атака</button>
-    <p id="status">Підключення...</p>
+   <h1>Дуель</h1>
+   <button id="attack" disabled>Атака</button>
+   <p id="status">Підключення...</p>
 
-    <script>
-        const socket = new WebSocket(`ws://${window.location.hostname}:3000`);
+   <script>
+      const socket = new WebSocket(`wss://${window.location.hostname}:3000`);
 
-        const attackBtn = document.getElementById('attack');
-        const status = document.getElementById('status');
+      const attackBtn = document.getElementById('attack');
+      const status = document.getElementById('status');
 
-        ws.onopen = () => {
-            status.textContent = 'Підключено до сервера';
-        };
+      ws.onopen = () => {
+         status.textContent = 'Підключено до сервера';
+      };
 
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
+      ws.onmessage = (event) => {
+         const data = JSON.parse(event.data);
 
-            if (data.type === 'start') {
-                status.textContent = data.message;
-                attackBtn.disabled = false;
-            } else if (data.type === 'update') {
-                status.textContent = data.message + ` Удари: ${data.hits}`;
-            } else if (data.type === 'end') {
-                status.textContent = data.message;
-                attackBtn.disabled = true;
-            } else if (data.type === 'error') {
-                status.textContent = data.message;
-            }
-        };
+         if (data.type === 'start') {
+            status.textContent = data.message;
+            attackBtn.disabled = false;
+         } else if (data.type === 'update') {
+            status.textContent = data.message + ` Удари: ${data.hits}`;
+         } else if (data.type === 'end') {
+            status.textContent = data.message;
+            attackBtn.disabled = true;
+         } else if (data.type === 'error') {
+            status.textContent = data.message;
+         }
+      };
 
-        attackBtn.addEventListener('click', () => {
-            ws.send('attack');
-        });
-    </script>
+      attackBtn.addEventListener('click', () => {
+         ws.send('attack');
+      });
+   </script>
 </body>
+
 </html>
