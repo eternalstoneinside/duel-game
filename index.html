@@ -4,21 +4,27 @@
 <head>
    <meta charset="UTF-8" />
    <title>Дуель</title>
+   <link rel="stylesheet" href="styles.css" /> <!-- Підключаємо файл зі стилями -->
 </head>
 
 <body>
    <h1>Дуель</h1>
    <button id="attack" disabled>Атака</button>
    <p id="status">Підключення...</p>
+   <p>Ваші удари: <span id="player-hits">0</span></p>
+   <p>Удари суперника: <span id="opponent-hits">0</span></p>
 
    <script>
       // Підключення до сервера через WebSocket з використанням wss
       const socket = new WebSocket(`wss://${window.location.hostname}`); // без порту
 
-
-
       const attackBtn = document.getElementById('attack');
       const status = document.getElementById('status');
+      const playerHitsDisplay = document.getElementById('player-hits');
+      const opponentHitsDisplay = document.getElementById('opponent-hits');
+
+      let playerHits = 0;
+      let opponentHits = 0;
 
       // Подія на відкриття з'єднання
       socket.onopen = () => {
@@ -34,7 +40,14 @@
             status.textContent = data.message;
             attackBtn.disabled = false; // Активуємо кнопку після старту гри
          } else if (data.type === 'update') {
-            status.textContent = data.message + ` Удари: ${data.hits}`; // Оновлюємо кількість ударів
+            status.textContent = data.message; // Оновлюємо повідомлення від сервера
+            if (data.message.includes("Ваш удар!")) {
+               playerHits += 1;
+               playerHitsDisplay.textContent = playerHits;
+            } else if (data.message.includes("Суперник атакував!")) {
+               opponentHits += 1;
+               opponentHitsDisplay.textContent = opponentHits;
+            }
          } else if (data.type === 'end') {
             status.textContent = data.message;
             attackBtn.disabled = true; // Вимикаємо кнопку після завершення гри
@@ -47,6 +60,7 @@
       attackBtn.addEventListener('click', () => {
          socket.send('attack'); // Відправляємо повідомлення на сервер
       });
+
    </script>
 
 </body>
