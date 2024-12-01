@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <title>Дуель</title>
+</head>
+<body>
+    <h1>Дуель</h1>
+    <button id="attack" disabled>Атака</button>
+    <p id="status">Підключення...</p>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:3000');
+        const attackBtn = document.getElementById('attack');
+        const status = document.getElementById('status');
+
+        ws.onopen = () => {
+            status.textContent = 'Підключено до сервера';
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'start') {
+                status.textContent = data.message;
+                attackBtn.disabled = false;
+            } else if (data.type === 'update') {
+                status.textContent = data.message + ` Удари: ${data.hits}`;
+            } else if (data.type === 'end') {
+                status.textContent = data.message;
+                attackBtn.disabled = true;
+            } else if (data.type === 'error') {
+                status.textContent = data.message;
+            }
+        };
+
+        attackBtn.addEventListener('click', () => {
+            ws.send('attack');
+        });
+    </script>
+</body>
+</html>
