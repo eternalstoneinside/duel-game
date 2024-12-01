@@ -12,35 +12,41 @@
    <p id="status">Підключення...</p>
 
    <script>
+      // Підключення до сервера через WebSocket з використанням wss
       const socket = new WebSocket(`wss://${window.location.hostname}:3000`);
 
       const attackBtn = document.getElementById('attack');
       const status = document.getElementById('status');
 
-      ws.onopen = () => {
+      // Подія на відкриття з'єднання
+      socket.onopen = () => {
          status.textContent = 'Підключено до сервера';
       };
 
-      ws.onmessage = (event) => {
+      // Обробка повідомлень від сервера
+      socket.onmessage = (event) => {
          const data = JSON.parse(event.data);
 
+         // В залежності від типу повідомлення від сервера, змінюємо статус
          if (data.type === 'start') {
             status.textContent = data.message;
-            attackBtn.disabled = false;
+            attackBtn.disabled = false; // Активуємо кнопку після старту гри
          } else if (data.type === 'update') {
-            status.textContent = data.message + ` Удари: ${data.hits}`;
+            status.textContent = data.message + ` Удари: ${data.hits}`; // Оновлюємо кількість ударів
          } else if (data.type === 'end') {
             status.textContent = data.message;
-            attackBtn.disabled = true;
+            attackBtn.disabled = true; // Вимикаємо кнопку після завершення гри
          } else if (data.type === 'error') {
-            status.textContent = data.message;
+            status.textContent = data.message; // Виводимо повідомлення про помилку
          }
       };
 
+      // Клік по кнопці атаки
       attackBtn.addEventListener('click', () => {
-         ws.send('attack');
+         socket.send('attack'); // Відправляємо повідомлення на сервер
       });
    </script>
+
 </body>
 
 </html>
