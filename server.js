@@ -6,12 +6,12 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// Вказуємо статичні файли (якщо вони є в папці "public" або іншій папці)
-app.use(express.static('public'));
+// Налаштовуємо статичні файли, щоб сервер міг знаходити styles.css
+app.use(express.static(__dirname)); // Вказуємо корінь проекту
 
 // Обробка кореневого запиту для відправки HTML файлу
 app.get('/', (req, res) => {
-   res.sendFile(__dirname + '/index.html'); // Шлях до вашого HTML файлу
+   res.sendFile(__dirname + '/index.html'); // Відправляємо index.html
 });
 
 let players = []; // Зберігаємо підключення гравців
@@ -71,7 +71,7 @@ wss.on('connection', (ws) => {
    });
 });
 
-const port = process.env.PORT || 10000;  // Використовуємо PORT від Render або 10000 за замовчуванням
+const port = process.env.PORT || 10000;
 server.listen(port, () => {
    console.log(`Server is running on port ${port}`);
 });
