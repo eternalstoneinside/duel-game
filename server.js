@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const path = require('path'); // Для роботи з шляхами
 const WebSocket = require('ws');
 
 const app = express();
@@ -8,6 +9,12 @@ const wss = new WebSocket.Server({ server });
 
 let players = []; // Зберігаємо підключення гравців
 
+// Обробник для кореневого шляху
+app.get('/', (req, res) => {
+   res.sendFile(path.join(__dirname, 'index.html')); // Вказати шлях до вашого HTML файлу
+});
+
+// WebSocket обробники
 wss.on('connection', (ws) => {
    if (players.length >= 2) {
       ws.send(JSON.stringify({ type: 'error', message: 'Гра вже заповнена' }));
@@ -65,7 +72,6 @@ wss.on('connection', (ws) => {
    });
 });
 
-// Відкриваємо сервер на порту, який надає Render
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
    console.log(`Server is running on port ${port}`);
