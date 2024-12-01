@@ -10,7 +10,8 @@
     <p id="status">Підключення...</p>
 
     <script>
-        const ws = new WebSocket('ws://localhost:3000');
+        const socket = new WebSocket(`ws://${window.location.hostname}:3000`);
+
         const attackBtn = document.getElementById('attack');
         const status = document.getElementById('status');
 
